@@ -1,0 +1,70 @@
+{
+  "name": "cydhub",
+  "version": "0.2.0",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "audit-fix": "npm audit fix",
+    "prepare": "husky install",
+    "lint": "next lint && eslint --fix --quiet *.{js,ts,jsx,tsx} --no-error-on-unmatched-pattern",
+    "pre-commit": "npm run lint-staged",
+    "prettify": "npm run prettier",
+    "format": "prettier --write . --log-level silent",
+    "prisma": "npx prisma db pull && npx prisma generate",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:e2e": "playwright test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pre-commit"
+    }
+  },
+  "lint-staged": {
+    "*/*.{js,jsx,ts,tsx}": [
+      "eslint --fix *.{js,ts,jsx,tsx} --no-error-on-unmatched-pattern",
+      "prettier --write ."
+    ]
+  },
+  "dependencies": {
+    "@nextui-org/system": "^2.4.6",
+    "@prisma/client": "^6.2.1",
+    "@types/react": "19.0.4",
+    "@types/react-dom": "19.0.2",
+    "autoprefixer": "10.4.20",
+    "aws-sdk": "^2.1632.0",
+    "axios": "^1.7.9",
+    "cookie": "^1.0.2",
+    "daisyui": "^4.12.23",
+    "eslint": "9.17.0",
+    "eslint-config-next": "15.1.4",
+    "eslint-config-prettier": "^10.0.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.3.0",
+    "next": "^14.2.18",
+    "postcss": "8.4.49",
+    "prettier": "^3.4.2",
+    "prisma": "^6.2.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "^5.5.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "5.7.3"
+  },
+  "devDependencies": {
+    "@auth0/nextjs-auth0": "^3.5.0",
+    "@aws-sdk/client-s3": "^3.609.0",
+    "@aws-sdk/client-ses": "^3.609.0",
+    "@aws-sdk/s3-request-presigner": "^3.609.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^22.13.5"
+  },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  }
+}

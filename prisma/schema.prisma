@@ -1,0 +1,205 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  user_id         Int       @id @default(autoincrement())
+  name            String?
+  email           String    @unique
+  role            String?
+  payment_info    String?
+  invite_code     String?   @db.Uuid
+  signup_complete Boolean?
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model admin {
+  admin_user_id Int           @id
+  is_active     Boolean?
+  user          user          @relation(fields: [admin_user_id], references: [user_id], onDelete: Cascade)
+  scholarship   scholarship[]
+}
+
+model assignment {
+  assignment_id         Int                     @id @default(autoincrement())
+  classroom_id          Int
+  name                  String
+  description           String?
+  assignment_number     Int?
+  due_date              DateTime                @db.Date
+  created_at            DateTime?               @default(now()) @db.Timestamp(6)
+  classroom             classroom               @relation(fields: [classroom_id], references: [classroom_id], onDelete: Cascade)
+  assignment_submission assignment_submission[]
+  question              question[]
+}
+
+model assignment_submission {
+  assignment_submission_id Int                   @id @default(autoincrement())
+  assignment_id            Int
+  student_user_id          Int
+  s3_path                  String
+  submitted_at             DateTime?             @default(now()) @db.Timestamp(6)
+  assignment               assignment            @relation(fields: [assignment_id], references: [assignment_id], onDelete: NoAction, onUpdate: NoAction)
+  student                  student               @relation(fields: [student_user_id], references: [student_user_id], onDelete: NoAction, onUpdate: NoAction)
+  question_submission      question_submission[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model classroom {
+  classroom_id      Int                 @id @default(autoincrement())
+  name              String
+  description       String?
+  capacity          Int?
+  teacher_user_id   Int
+  start_date        DateTime?           @db.Date
+  end_date          DateTime?           @db.Date
+  assignment        assignment[]
+  teacher           teacher             @relation(fields: [teacher_user_id], references: [teacher_user_id], onDelete: NoAction, onUpdate: NoAction)
+  student_classroom student_classroom[]
+  user_classroom    user_classroom[]
+}
+
+model organization {
+  organization_id   Int                 @id @default(autoincrement())
+  name              String?
+  description       String?
+  website           String?
+  old_id            String?             @db.Uuid
+  scholarship       scholarship[]
+  user_organization user_organization[]
+}
+
+model question {
+  question_id              Int                   @id @default(autoincrement())
+  assignment_id            Int
+  question_number          Int?
+  name                     String?
+  prompt                   String?
+  example_solution_s3_path String?
+  accepted_file_types      String?
+  created_at               DateTime?             @default(now()) @db.Timestamp(6)
+  assignment               assignment            @relation(fields: [assignment_id], references: [assignment_id], onDelete: Cascade)
+  question_submission      question_submission[]
+}
+
+model question_submission {
+  question_submission_id   Int                   @id @default(autoincrement())
+  assignment_submission_id Int
+  question_id              Int
+  student_user_id          Int
+  s3_path                  String
+  created_at               DateTime?             @default(now()) @db.Timestamp(6)
+  assignment_submission    assignment_submission @relation(fields: [assignment_submission_id], references: [assignment_submission_id], onDelete: NoAction, onUpdate: NoAction)
+  question                 question              @relation(fields: [question_id], references: [question_id], onDelete: NoAction, onUpdate: NoAction)
+  student                  student               @relation(fields: [student_user_id], references: [student_user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model scholarship {
+  scholarship_id      Int                   @id @default(autoincrement())
+  name                String
+  organization_id     Int
+  award               String?
+  description         String?
+  category            String?
+  eligibility         String?
+  region              String?
+  deadline            DateTime?             @db.Date
+  fafsa               Boolean?              @default(false)
+  gpa                 Decimal?              @db.Decimal(3, 2)
+  admin_id            Int?
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  admin               admin?                @relation(fields: [admin_id], references: [admin_user_id])
+  organization        organization          @relation(fields: [organization_id], references: [organization_id], onDelete: Cascade, onUpdate: NoAction)
+  student_scholarship student_scholarship[]
+}
+
+model student {
+  student_user_id       Int                     @id
+  joined_at             DateTime?               @default(now()) @db.Timestamp(6)
+  is_active             Boolean?                @default(true)
+  assignment_submission assignment_submission[]
+  question_submission   question_submission[]
+  user                  user                    @relation(fields: [student_user_id], references: [user_id], onDelete: Cascade)
+  student_classroom     student_classroom[]
+  student_scholarship   student_scholarship[]
+}
+
+model student_classroom {
+  student_classroom_id Int       @id @default(autoincrement())
+  classroom_id         Int
+  student_user_id      Int
+  enrolled_at          DateTime? @default(now()) @db.Timestamp(6)
+  classroom            classroom @relation(fields: [classroom_id], references: [classroom_id], onDelete: Cascade)
+  student              student   @relation(fields: [student_user_id], references: [student_user_id], onDelete: Cascade)
+}
+
+model student_scholarship {
+  student_scholarship_id Int         @id @default(autoincrement())
+  student_user_id        Int
+  scholarship_id         Int
+  is_bookmarked          Boolean?    @default(false)
+  scholarship            scholarship @relation(fields: [scholarship_id], references: [scholarship_id], onDelete: Cascade, onUpdate: NoAction)
+  student                student     @relation(fields: [student_user_id], references: [student_user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model teacher {
+  teacher_user_id  Int         @id
+  hire_date        DateTime?   @db.Date
+  termination_date DateTime?   @db.Date
+  joined_at        DateTime?   @default(now()) @db.Timestamp(6)
+  is_active        Boolean?    @default(true)
+  classroom        classroom[]
+  user             user        @relation(fields: [teacher_user_id], references: [user_id], onDelete: Cascade)
+}
+
+model user {
+  user_id           Int                 @id @default(autoincrement())
+  name              String?
+  email             String              @unique
+  role              String?
+  payment_info      String?
+  invite_code       String?             @db.Uuid
+  signup_complete   Boolean?
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  city              String?
+  state             String?
+  country           String?
+  timezone          String?
+  admin             admin?
+  student           student?
+  teacher           teacher?
+  user_classroom    user_classroom[]
+  user_organization user_organization[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_classroom {
+  user_classroom_id Int       @id @default(autoincrement())
+  user_id           Int
+  classroom_id      Int
+  role              String?
+  classroom         classroom @relation(fields: [classroom_id], references: [classroom_id], onDelete: NoAction, onUpdate: NoAction)
+  user              user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([user_id, classroom_id], map: "user_id_classroom_id")
+}
+
+model user_organization {
+  user_organization_id Int          @id @default(autoincrement())
+  user_id              Int
+  organization_id      Int
+  organization         organization @relation(fields: [organization_id], references: [organization_id], onDelete: NoAction, onUpdate: NoAction)
+  user                 user         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
