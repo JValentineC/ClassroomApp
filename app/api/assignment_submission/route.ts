@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAssignmentSubmission, createQuestionSubmission, deleteAssignmentSubmissions, hasUserSubmittedAssignment } from '@/lib/query/classroom';
+import {
+  createAssignmentSubmission,
+  createQuestionSubmission,
+  deleteAssignmentSubmissions,
+  hasUserSubmittedAssignment,
+} from '@/lib/query/classroom';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +18,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid files object' }, { status: 400 });
     }
     await deleteAssignmentSubmissions(assignmentId, userId);
-
 
     // Step 1: Create an assignment submission
     const assignmentSubmission = await createAssignmentSubmission({

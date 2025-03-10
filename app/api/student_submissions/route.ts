@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAssignmentSubmissions , getUserAssignmentSubmission} from '@/lib/query/classroom';
-
+import { getAssignmentSubmissions, getUserAssignmentSubmission } from '@/lib/query/classroom';
 
 export async function GET(req: NextRequest) {
   try {

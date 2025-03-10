@@ -257,7 +257,10 @@ export async function deleteAssignmentSubmissions(assignmentId: number, userId: 
   }
 }
 
-export async function getUserAssignmentSubmission(assignment_id: number, student_user_id: number): Promise<assignment_submission | null> {
+export async function getUserAssignmentSubmission(
+  assignment_id: number,
+  student_user_id: number,
+): Promise<assignment_submission | null> {
   try {
     return await prisma.assignment_submission.findFirst({
       where: {

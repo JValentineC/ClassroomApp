@@ -18,7 +18,7 @@ export default function ClassroomsPage() {
 
     try {
       setError('');
-      const response = await fetch(`/api/user_classroom?userId=${userId}`); 
+      const response = await fetch(`/api/user_classroom?userId=${userId}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch classrooms');

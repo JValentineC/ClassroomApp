@@ -48,7 +48,7 @@ export default function ClassroomPage({ params }: { params: { classroomId: strin
       {userRole === 'admin' && (
         <>
           <TeacherForm classroomId={classroomId} name={classname} userId={userId} />
-          <StudentForm classroomId={classroomId} userId={userId} name={classname}/>
+          <StudentForm classroomId={classroomId} userId={userId} name={classname} />
         </>
       )}
     </div>
