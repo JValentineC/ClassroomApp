@@ -51,7 +51,7 @@ const StudentList: React.FC<StudentListProps> = ({ submissions, onSelectStudent,
         <div>
           {submissions.map(submission => (
             <p
-              key={submission.assignmentSubmissionId}
+              key={submission.assignment_submission_id}
               className="bg-black border p-6 rounded-lg shadow-lg w-120"
               onClick={() => {
                 if (submission.student_user_id) {
@@ -66,7 +66,7 @@ const StudentList: React.FC<StudentListProps> = ({ submissions, onSelectStudent,
                 }
               }}
             >
-              {submission.student ?? 'Unknown Student'}
+              {submission.student?.user.name ?? 'Unknown Student'}
             </p>
           ))}
         </div>

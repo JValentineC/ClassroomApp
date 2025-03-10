@@ -92,7 +92,7 @@ export default function InstructorSubmissionsView({ classroomId }: { classroomId
           {state.selectedStudentId && (
             <StudentSubmissionDetails
               questionSubmissions={
-                state.submissions.find(sub => sub.student_user_id === state.selectedStudentId)?.questionSubmissions ||
+                state.submissions.find(sub => sub.student_user_id === state.selectedStudentId)?.question_submission ||
                 []
               }
               onViewFile={handleViewFile}

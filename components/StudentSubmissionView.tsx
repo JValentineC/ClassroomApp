@@ -77,7 +77,7 @@ export default function StudentSubmissionsView({ classroomId, userId }: { classr
 
       {state.selectedAssignmentId && state.submissions && (
         <StudentSubmissionDetails
-          questionSubmissions={state.submissions.questionSubmissions || []}
+          questionSubmissions={state.submissions.question_submission || []}
           onViewFile={handleViewFile}
         />
       )}

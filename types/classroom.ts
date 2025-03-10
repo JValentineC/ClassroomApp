@@ -18,7 +18,7 @@ export type AssignmentSubmission = assignment_submission & {
       name: string | null;
     };
   };
-  question_submission: question_submission[];
+  question_submission: QuestionSubmission[];
 };
 
 export type QuestionSubmission = {
@@ -32,4 +32,8 @@ export type QuestionSubmission = {
   assignment_id?: number;
   student_id?: number;
   answer?: string;
+  question: {
+    question_number: number;
+    name: string;
+  };
 };

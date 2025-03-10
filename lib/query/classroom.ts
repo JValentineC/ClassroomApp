@@ -193,7 +193,7 @@ export async function getQuestionSubmissions(assignmentId: number): Promise<ques
 
 export async function getAssignmentSubmissions(assignmentId: number): Promise<AssignmentSubmission[]> {
   try {
-    return await prisma.assignment_submission.findMany({
+    const submissions = await prisma.assignment_submission.findMany({
       where: { assignment_id: assignmentId },
       include: {
         student: {
@@ -208,6 +208,21 @@ export async function getAssignmentSubmissions(assignmentId: number): Promise<As
         },
       },
     });
+
+    // Format the submissions to ensure question_number and question.name are always defined
+    const formattedSubmissions = submissions.map(submission => ({
+      ...submission,
+      question_submission: submission.question_submission.map(qs => ({
+        ...qs,
+        question: {
+          ...qs.question,
+          question_number: qs.question.question_number ?? 0, // Provide a default value if null
+          name: qs.question.name ?? '', // Provide a default value if null
+        },
+      })),
+    }));
+
+    return formattedSubmissions;
   } catch (error) {
     console.error('Error fetching assignment submissions:', error);
     throw new Error('Failed to fetch assignment submissions');
